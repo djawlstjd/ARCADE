@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2인용 오목 - 규칙 적용</title>
+<style>
+  body {
+    background: #f0e7d8;
+    font-family: 'Arial', sans-serif;
+    margin: 0; padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+    user-select: none;
+  }
+  h1 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  #container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+  #rowLabels {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-top: 48px;
+    font-weight: bold;
+    color: #555;
+  }
+  #rowLabels div {
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    font-size: 14px;
+  }
+  #colLabels {
+    display: flex;
+    gap: 4px;
+    margin-left: 44px;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+  }
+  #colLabels div {
+    width: 34px;
+    text-align: center;
+    font-size: 14px;
+  }
+  #board {
+    display: grid;
+    grid-template-columns: repeat(15, 34px);
+    grid-template-rows: repeat(15, 34px);
+    gap: 4px;
+    background: #deb887;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px #aa8c66aa;
+    position: relative;
+  }
+  .cell {
+    width: 34px;
+    height: 34px;
+    background: #f5deb3;
+    border-radius: 50%;
+    border: 1.5px solid #a0522d;
+    cursor: pointer;
+    position: relative;
+    box-sizing: border-box;
+  }
+  .cell:hover {
+    background: #e0cda9;
+  }
+  .stone {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .black {
+    background: radial-gradient(circle at 40% 40%, #000, #222);
+    box-shadow:
+      inset 2px 2px 6px #333,
+      0 0 6px #000a;
+  }
+  .white {
+    background: radial-gradient(circle at 40% 40%, #fff, #ccc);
+    box-shadow:
+      inset 1px 1px 6px #fff,
+      0 0 6px #aaa;
+  }
+  .invalid {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: #cc0000;
+    font-weight: 900;
+    font-size: 24px;
+    pointer-events: none;
+    user-select: none;
+  }
+  #info {
+    margin-top: 18px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+    min-height: 28px;
+  }
+  #resetBtn {
+    margin-top: 14px;
+    padding: 10px 24px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    background: #a0522d;
+    box-shadow: 0 3px 7px #7b3f1f;
+    transition: background-color 0.3s;
+  }
+  #resetBtn:hover {
+    background: #7b3f1f;
+  }
+</style>
+</head>
+<body>
+<h1>2인용 오목 - 규칙 적용</h1>
+<div id="colLabels"></div>
+<div id="container">
+  <div id="rowLabels"></div>
+  <div id="board"></div>
+</div>
+<div id="info">흑돌 차례입니다. 첫 수는 반드시 중앙(8행 8열)에 둡니다.</div>
+<button id="resetBtn">새 게임</button>
+
+<script>
+  const SIZE = 15;
+  const CENTER = 7; // 0-based index 중앙 (7,7)
+  const boardDiv = document.getElementById('board');
+  const rowLabelsDiv = document.getElementById('rowLabels');
+  const colLabelsDiv = document.getElementById('colLabels');
+  const infoDiv = document.getElementById('info');
+  const resetBtn = document.getElementById('resetBtn');
+
+  let board = [];
+  let currentPlayer = 'black';
+  let gameOver = false;
+  let firstMove = true;
+
+  // A~O (15글자)
+  const colLabels = Array.from({length: SIZE}, (_, i) => String.fromCharCode(65 + i));
+  const rowLabels = Array.from({length: SIZE}, (_, i) => (i + 1).toString());
+
+  function createLabels() {
+    colLabelsDiv.innerHTML = '';
+    rowLabelsDiv.innerHTML = '';
+    colLabels.forEach(label => {
+      const div = document.createElement('div');
+      div.textContent = label;
+      colLabelsDiv.appendChild(div);
+    });
+    rowLabels.forEach(label => {
+      const div = document.createElement('div');
+      div.textContent = label;
+      rowLabelsDiv.appendChild(div);
+    });
+  }
+
+  function initBoard() {
+    board = [];
+    boardDiv.innerHTML = '';
+    gameOver = false;
+    currentPlayer = 'black';
+    firstMove = true;
+    infoDiv.textContent = '흑돌 차례입니다. 첫 수는 반드시 중앙(8행 8열)에 둡니다.';
+
+    for(let r=0; r<SIZE; r++) {
+      board[r] = [];
+      for(let c=0; c<SIZE; c++) {
+        board[r][c] = null;
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        cell.addEventListener('click', onCellClick);
+        boardDiv.appendChild(cell);
+      }
+    }
+  }
+
+  function onCellClick(e) {
+    if(gameOver) return;
+
+    const r = +e.currentTarget.dataset.r;
+    const c = +e.currentTarget.dataset.c;
+
+    if(board[r][c] !== null) return;
+
+    if(firstMove && currentPlayer === 'black') {
+      if(r !== CENTER || c !== CENTER) {
+        markInvalid(r, c, '첫 수는 반드시 중앙(8행 8열)에 둬야 합니다.');
+        return;
+      }
+      firstMove = false;
+    }
+
+    if(!isValidMove(r, c, currentPlayer)) {
+      markInvalid(r, c, '금수 규칙 위반! 이곳에 둘 수 없습니다.');
+      return;
+    }
+
+    placeStoneAt(r, c, currentPlayer);
+  }
+
+  function placeStoneAt(r, c, player) {
+    board[r][c] = player;
+    const cell = getCell(r, c);
+    placeStone(cell, player);
+
+    if(checkWin(r, c)) {
+      gameOver = true;
+      infoDiv.textContent = `${player === 'black' ? '흑돌' : '백돌'} 승리!`;
+      return;
+    }
+
+    if(isBoardFull()) {
+      gameOver = true;
+      infoDiv.textContent = '무승부입니다!';
+      return;
+    }
+
+    currentPlayer = (player === 'black') ? 'white' : 'black';
+    infoDiv.textContent = `${currentPlayer === 'black' ? '흑돌' : '백돌'} 차례입니다.`;
+  }
+
+  function getCell(r, c) {
+    return boardDiv.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+  }
+
+  function placeStone(cellElem, player) {
+    const stone = document.createElement('div');
+    stone.classList.add('stone', player);
+    cellElem.appendChild(stone);
+  }
+
+  function markInvalid(r, c, message) {
+    const cell = getCell(r, c);
+    if(cell.querySelector('.invalid')) return; // 이미 표시 있음
+    const invalidMark = document.createElement('div');
+    invalidMark.classList.add('invalid');
+    invalidMark.textContent = 'X';
+    cell.appendChild(invalidMark);
+    infoDiv.textContent = message;
+    setTimeout(() => {
+      invalidMark.remove();
+      infoDiv.textContent = `${currentPlayer === 'black' ? '흑돌' : '백돌'} 차례입니다.`;
+    }, 1800);
+  }
+
+  function checkWin(r, c) {
+    const directions = [
+      [0, 1], [1, 0], [1, 1], [1, -1]
+    ];
+    for(let [dr, dc] of directions) {
+      let count = 1;
+      let nr = r + dr;
+      let nc = c + dc;
+      while(inBounds(nr, nc) && board[nr][nc] === currentPlayer) {
+        count++; nr += dr; nc += dc;
+      }
+      nr = r - dr;
+      nc = c - dc;
+      while(inBounds(nr, nc) && board[nr][nc] === currentPlayer) {
+        count++; nr -= dr; nc -= dc;
+      }
+      if(count === 5) return true;  // 5목만 승리 인정
+      if(count > 5) return false; // 6목 이상 금지 (승리 아님)
+    }
+    return false;
+  }
+
+  function inBounds(r, c) {
+    return r >= 0 && r < SIZE && c >= 0 && c < SIZE;
+  }
+
+  function isBoardFull() {
+    for(let r=0; r<SIZE; r++) {
+      for(let c=0; c<SIZE; c++) {
+        if(board[r][c] === null) return false;
+      }
+    }
+    return true;
+  }
+
+  // 금수 규칙 검사 (33, 44, 6목 이상) 흑돌만 적용
+  function isValidMove(r, c, player) {
+    if(board[r][c] !== null) return false;
+    if(player === 'white') return true;
+
+    if(checkOverline(r, c, player)) return false;
+    if(checkDouble33(r, c, player)) return false;
+    if(checkDouble44(r, c, player)) return false;
+
+    return true;
+  }
+
+  // 6목 이상 검사
+  function checkOverline(r, c, player) {
+    return countContinuous(r, c, player, 6);
+  }
+
+  // 33 금수 검사
+  function checkDouble33(r, c, player) {
+    return countOpenSequences(r, c, player, 3) >= 2;
+  }
+
+  // 44 금수 검사
+  function checkDouble44(r, c, player) {
+    return countOpenSequences(r, c, player, 4) >= 2;
+  }
+
+  function countOpenSequences(r, c, player, length) {
+    let count = 0;
+    const directions = [
+      [0,1],[1,0],[1,1],[1,-1]
+    ];
+    board[r][c] = player; // 임시 착수
+    for(let [dr, dc] of directions) {
+      if(isOpenSequence(r, c, player, length, dr, dc)) count++;
+    }
+    board[r][c] = null; // 원복
+    return count;
+  }
+
+  function isOpenSequence(r, c, player, length, dr, dc) {
+    let stones = [];
+    let startR = r;
+    let startC = c;
+    while(inBounds(startR - dr, startC - dc) && board[startR - dr][startC - dc] === player) {
+      startR -= dr; startC -= dc;
+    }
+    let currR = startR;
+    let currC = startC;
+    while(inBounds(currR, currC) && board[currR][currC] === player) {
+      stones.push([currR, currC]);
+      currR += dr; currC += dc;
+    }
+    if(stones.length !== length) return false;
+    const beforeR = stones[0][0] - dr;
+    const beforeC = stones[0][1] - dc;
+    const afterR = stones[length -1][0] + dr;
+    const afterC = stones[length -1][1] + dc;
+    if(inBounds(beforeR, beforeC) && board[beforeR][beforeC] !== null) return false;
+    if(inBounds(afterR, afterC) && board[afterR][afterC] !== null) return false;
+    return true;
+  }
+
+  function countContinuous(r, c, player, threshold) {
+    const directions = [
+      [0,1],[1,0],[1,1],[1,-1]
+    ];
+    board[r][c] = player; // 임시 착수
+    for(let [dr, dc] of directions) {
+      let count = 1;
+      let nr = r + dr;
+      let nc = c + dc;
+      while(inBounds(nr, nc) && board[nr][nc] === player) {
+        count++; nr += dr; nc += dc;
+      }
+      nr = r - dr;
+      nc = c - dc;
+      while(inBounds(nr, nc) && board[nr][nc] === player) {
+        count++; nr -= dr; nc -= dc;
+      }
+      if(count >= threshold) {
+        board[r][c] = null;
+        return true;
+      }
+    }
+    board[r][c] = null;
+    return false;
+  }
+
+  resetBtn.addEventListener('click', () => {
+    initBoard();
+    infoDiv.textContent = '흑돌 차례입니다. 첫 수는 반드시 중앙(8행 8열)에 둡니다.';
+  });
+
+  createLabels();
+  initBoard();
+</script>
+</body>
+</html>
