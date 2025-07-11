@@ -4,13 +4,14 @@
 <meta charset="UTF-8" />
 <title>지뢰찾기 (Minesweeper)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- 👇 여기서부터 CSS 교체 -->
 <style>
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css');
   body {
     margin: 0; padding: 0; min-height: 100vh;
     font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background: linear-gradient(135deg, #f0f6ff 70%, #fffbe6 100%);
-    color: #1a2a4f;
+    background: linear-gradient(135deg, #1a2135 80%, #293964 100%);
+    color: #e5e9f2;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,9 +20,10 @@
     margin-top: 32px;
     font-weight: 700;
     font-size: 2.4rem;
-    color: #3259db;
+    color: #8dbeff;
     letter-spacing: 3px;
     user-select: none;
+    text-shadow: 0 2px 16px #0006;
   }
   .controls {
     margin-top: 12px;
@@ -30,36 +32,38 @@
     justify-content: center;
   }
   button.level-btn {
-    background: #dbefff;
+    background: #212941;
     border: none;
-    border-radius: 8px;
-    padding: 10px 18px;
+    border-radius: 9px;
+    padding: 11px 20px;
     font-weight: 700;
-    color: #3168de;
+    color: #8dbbff;
     cursor: pointer;
-    font-size: 1.05rem;
-    transition: background-color 0.3s;
+    font-size: 1.07rem;
+    transition: background 0.25s, color 0.22s;
+    box-shadow: 0 3px 14px #0037;
   }
   button.level-btn.selected {
-    background: #ffd859;
-    color: #895e00;
+    background: #5fa8f6;
+    color: #173866;
   }
   #resetBtn {
-    margin: 14px auto 0 auto;
-    background: #4b8aff;
+    margin: 16px auto 0 auto;
+    background: #396fff;
     color: #fff;
     border: none;
-    border-radius: 8px;
-    padding: 10px 26px;
+    border-radius: 9px;
+    padding: 11px 32px;
     font-weight: 700;
     cursor: pointer;
     font-size: 1.15rem;
-    box-shadow: 0 3px 10px #3a6ed9aa;
-    transition: background-color 0.25s;
+    box-shadow: 0 4px 18px #1d2a6a70;
+    transition: background-color 0.21s;
     display: block;
   }
   #resetBtn:hover {
-    background-color: #366fcc;
+    background-color: #7ac3ff;
+    color: #234;
   }
   .status-bar {
     margin-top: 18px;
@@ -69,77 +73,90 @@
     justify-content: space-between;
     font-weight: 700;
     font-size: 1.1rem;
-    padding: 6px 16px;
-    background: #ffffffdd;
-    border-radius: 10px;
-    box-shadow: 0 3px 15px #8db7f732;
+    padding: 8px 22px;
+    background: #181f32;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px #0a113e6b;
     user-select: none;
+    color: #d0ecff;
+    letter-spacing: 1px;
   }
   #board {
-    margin-top: 22px;
-    background: #e7f1fa;
-    border-radius: 16px;
-    padding: 16px 16px 12px 16px;
-    border: 3px solid #9fd5fc;
-    box-shadow: 0 3px 20px #c3e0ff77;
+    margin-top: 26px;
+    background: #101622;
+    border-radius: 22px;
+    padding: 17px 17px 14px 17px;
+    border: 3px solid #355799;
+    box-shadow: 0 4px 36px #061538ad;
   }
   .row {
     display: flex;
   }
   .cell {
-    width: 34px;
-    height: 34px;
-    margin: 3px;
-    background: #fafdff;
-    border-radius: 8px;
-    box-shadow: 0 1.5px 8px #b6d5fa88 inset;
-    border: 1.6px solid #bdd1ec;
+    width: 44px;
+    height: 44px;
+    margin: 4px;
+    background: #222b3d;
+    border-radius: 10px;
+    box-shadow: 0 2.5px 12px #091635bb inset, 0 1.2px 7px #212a3c;
+    border: 2px solid #232e48;
     text-align: center;
-    font-weight: 700;
-    font-size: 1.15rem;
-    line-height: 34px;
+    font-weight: 800;
+    font-size: 1.44rem;
+    line-height: 44px;
     cursor: pointer;
     user-select: none;
-    color: #244a8d;
-    transition: background-color 0.15s, color 0.15s, box-shadow 0.15s;
+    color: #c7d6f2;
+    transition: background 0.13s, border 0.13s, box-shadow 0.15s, color 0.1s;
+    outline: none;
+    filter: brightness(0.95);
   }
   .cell.revealed {
-    background: #fffbe8;
-    border-color: #d0bb6a;
-    box-shadow: 0 2.5px 13px #ffeaa022;
-    color: #3055a7;
+    background: #1a2132;
+    border-color: #3964a9;
+    box-shadow: 0 2px 13px #00142611 inset;
+    color: #a4bffc;
+    filter: brightness(1.06);
     cursor: default;
   }
+  .cell.revealed[data-num="1"] { color: #67a5ff; }
+  .cell.revealed[data-num="2"] { color: #55e286; }
+  .cell.revealed[data-num="3"] { color: #f17373; }
+  .cell.revealed[data-num="4"] { color: #f3cb6b; }
+  .cell.revealed[data-num="5"] { color: #e19af5; }
+  .cell.revealed[data-num="6"] { color: #2ff7e1; }
+  .cell.revealed[data-num="7"] { color: #ffd6a4; }
+  .cell.revealed[data-num="8"] { color: #c8d4ff; }
   .cell.mine.revealed {
-    background: #f36b3f;
-    color: white;
-    border-color: #ca4421;
-    box-shadow: 0 0 14px #f57e5faa;
-    font-size: 1.2rem;
-  }
-  .cell.flag {
-    background: #ffe18e;
-    color: #695100;
-    border-color: #e0bc46;
-    box-shadow: 0 0 12px #ffdb7cbb;
+    background: #db384e;
+    color: #fff;
+    border-color: #9e1327;
+    box-shadow: 0 0 19px #ff143566;
     font-size: 1.3rem;
   }
-  .best-record {
-    margin-left: 8px;
-    font-size: 0.95rem;
-    color: #bb9400;
+  .cell.flag {
+    background: #273825;
+    color: #fffad2;
+    border-color: #4d5e30;
+    box-shadow: 0 0 14px #ffe66733;
+    font-size: 1.5rem;
+  }
+  .cell:hover:not(.revealed) {
+    filter: brightness(1.20);
+    border-color: #5ad0f4;
+    background: #2a3248;
   }
   @media (max-width: 600px) {
     .cell {
-      width: 26px;
-      height: 26px;
-      line-height: 26px;
-      font-size: 0.9rem;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      font-size: 1.07rem;
       margin: 2px;
     }
     .status-bar {
       font-size: 1rem;
-      padding: 5px 12px;
+      padding: 7px 7px;
     }
   }
 </style>
@@ -284,17 +301,22 @@
         let text = '';
         if(revealed[r][c]) {
           cls += ' revealed';
+          let numAttr = '';
           if(board[r][c] === 9) {
             cls += ' mine';
             text = '💣';
           } else if(board[r][c] > 0) {
             text = board[r][c];
+            numAttr = ` data-num="${board[r][c]}"`;
           }
+          html += `<div class="${cls}" data-r="${r}" data-c="${c}"${numAttr}>${text}</div>`;
         } else if(flagged[r][c]) {
           cls += ' flag';
           text = '🚩';
+          html += `<div class="${cls}" data-r="${r}" data-c="${c}">${text}</div>`;
+        } else {
+          html += `<div class="${cls}" data-r="${r}" data-c="${c}"></div>`;
         }
-        html += `<div class="${cls}" data-r="${r}" data-c="${c}">${text}</div>`;
       }
       html += '</div>';
     }
