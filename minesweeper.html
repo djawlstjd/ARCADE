@@ -4,484 +4,435 @@
 <meta charset="UTF-8" />
 <title>지뢰찾기 (Minesweeper)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<!-- 👇 여기서부터 CSS 교체 -->
 <style>
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css');
-  body {
-    margin: 0; padding: 0; min-height: 100vh;
-    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    background: linear-gradient(135deg, #1a2135 80%, #293964 100%);
-    color: #e5e9f2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  h1 {
-    margin-top: 32px;
-    font-weight: 700;
-    font-size: 2.4rem;
-    color: #8dbeff;
-    letter-spacing: 3px;
-    user-select: none;
-    text-shadow: 0 2px 16px #0006;
-  }
-  .controls {
-    margin-top: 12px;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-  }
-  button.level-btn {
-    background: #212941;
-    border: none;
-    border-radius: 9px;
-    padding: 11px 20px;
-    font-weight: 700;
-    color: #8dbbff;
-    cursor: pointer;
-    font-size: 1.07rem;
-    transition: background 0.25s, color 0.22s;
-    box-shadow: 0 3px 14px #0037;
-  }
-  button.level-btn.selected {
-    background: #5fa8f6;
-    color: #173866;
-  }
-  #resetBtn {
-    margin: 16px auto 0 auto;
-    background: #396fff;
-    color: #fff;
-    border: none;
-    border-radius: 9px;
-    padding: 11px 32px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 1.15rem;
-    box-shadow: 0 4px 18px #1d2a6a70;
-    transition: background-color 0.21s;
-    display: block;
-  }
-  #resetBtn:hover {
-    background-color: #7ac3ff;
-    color: #234;
-  }
-  .status-bar {
-    margin-top: 18px;
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    justify-content: space-between;
-    font-weight: 700;
-    font-size: 1.1rem;
-    padding: 8px 22px;
-    background: #181f32;
-    border-radius: 12px;
-    box-shadow: 0 3px 15px #0a113e6b;
-    user-select: none;
-    color: #d0ecff;
-    letter-spacing: 1px;
-  }
-  #board {
-    margin-top: 26px;
-    background: #101622;
-    border-radius: 22px;
-    padding: 17px 17px 14px 17px;
-    border: 3px solid #355799;
-    box-shadow: 0 4px 36px #061538ad;
-  }
-  .row {
-    display: flex;
-  }
-  .cell {
-    width: 44px;
-    height: 44px;
-    margin: 4px;
-    background: #222b3d;
-    border-radius: 10px;
-    box-shadow: 0 2.5px 12px #091635bb inset, 0 1.2px 7px #212a3c;
-    border: 2px solid #232e48;
-    text-align: center;
-    font-weight: 800;
-    font-size: 1.44rem;
-    line-height: 44px;
-    cursor: pointer;
-    user-select: none;
-    color: #c7d6f2;
-    transition: background 0.13s, border 0.13s, box-shadow 0.15s, color 0.1s;
-    outline: none;
-    filter: brightness(0.95);
-  }
-  .cell.revealed {
-    background: #1a2132;
-    border-color: #3964a9;
-    box-shadow: 0 2px 13px #00142611 inset;
-    color: #a4bffc;
-    filter: brightness(1.06);
-    cursor: default;
-  }
-  .cell.revealed[data-num="1"] { color: #67a5ff; }
-  .cell.revealed[data-num="2"] { color: #55e286; }
-  .cell.revealed[data-num="3"] { color: #f17373; }
-  .cell.revealed[data-num="4"] { color: #f3cb6b; }
-  .cell.revealed[data-num="5"] { color: #e19af5; }
-  .cell.revealed[data-num="6"] { color: #2ff7e1; }
-  .cell.revealed[data-num="7"] { color: #ffd6a4; }
-  .cell.revealed[data-num="8"] { color: #c8d4ff; }
-  .cell.mine.revealed {
-    background: #db384e;
-    color: #fff;
-    border-color: #9e1327;
-    box-shadow: 0 0 19px #ff143566;
-    font-size: 1.3rem;
-  }
-  .cell.flag {
-    background: #273825;
-    color: #fffad2;
-    border-color: #4d5e30;
-    box-shadow: 0 0 14px #ffe66733;
-    font-size: 1.5rem;
-  }
-  .cell:hover:not(.revealed) {
-    filter: brightness(1.20);
-    border-color: #5ad0f4;
-    background: #2a3248;
-  }
-  @media (max-width: 600px) {
-    .cell {
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      font-size: 1.07rem;
-      margin: 2px;
-    }
-    .status-bar {
-      font-size: 1rem;
-      padding: 7px 7px;
-    }
-  }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #bdbdbd;
+  font-family: 'Pretendard Variable', '굴림', Gulim, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.wrapper {
+  background: #bdbdbd;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mine-container {
+  margin-top: 36px;
+  background: #c0c0c0;
+  border-radius: 7px;
+  border: 3px solid #fff;
+  box-shadow:
+    0 2px 0 #7b7b7b,
+    2px 0 0 #7b7b7b,
+    0 0 0 6px #808080,
+    0 0 0 10px #fff;
+  padding: 26px 24px 18px 24px;
+}
+.header {
+  background: #c0c0c0;
+  border: 3px solid #808080;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  margin-bottom: 10px;
+  padding: 6px 12px;
+  box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #7b7b7b;
+}
+.digits {
+  width: 60px;
+  height: 38px;
+  background: #222;
+  color: #e70707;
+  font-family: 'Digital-7', 'Consolas', 'Courier New', monospace;
+  font-size: 2.2rem;
+  text-align: right;
+  line-height: 38px;
+  border-radius: 4px;
+  margin: 0 16px;
+  box-shadow: inset 1.5px 1.5px 0 #7b7b7b;
+  letter-spacing: 3px;
+  padding-right: 5px;
+  user-select: none;
+}
+.smile-btn {
+  width: 42px; height: 42px;
+  border: 3px solid #808080;
+  border-radius: 8px;
+  background: #ededed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.1rem;
+  margin: 0 16px;
+  cursor: pointer;
+  box-shadow: 0 3px #fff, 0 -2px #7b7b7b, 2px 0 #fff, -2px 0 #7b7b7b;
+  user-select: none;
+  transition: filter 0.09s;
+}
+.smile-btn:active {
+  filter: brightness(1.14);
+}
+.board3d {
+  background: #bdbdbd;
+  border: 4px solid #fff;
+  border-radius: 4px;
+  box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #7b7b7b;
+  padding: 14px 14px 10px 14px;
+  display: inline-block;
+}
+.row {
+  display: flex;
+}
+.cell {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  background: #c0c0c0;
+  border-top: 2.5px solid #fff;
+  border-left: 2.5px solid #fff;
+  border-bottom: 2.5px solid #7b7b7b;
+  border-right: 2.5px solid #7b7b7b;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.18rem;
+  line-height: 32px;
+  cursor: pointer;
+  user-select: none;
+  color: #1a2a4f;
+  transition: background 0.08s, color 0.1s, border-color 0.1s;
+  box-sizing: border-box;
+}
+.cell:active:not(.revealed) {
+  background: #e7e7e7;
+}
+.cell.revealed {
+  background: #dedede;
+  border: 2.5px solid #bdbdbd;
+  color: #2a2a2a;
+  cursor: default;
+}
+.cell.revealed[data-num="1"] { color: #0e23fc; }
+.cell.revealed[data-num="2"] { color: #1ca40b; }
+.cell.revealed[data-num="3"] { color: #f1160a; }
+.cell.revealed[data-num="4"] { color: #1d3788; }
+.cell.revealed[data-num="5"] { color: #8b1707; }
+.cell.revealed[data-num="6"] { color: #2abbb2; }
+.cell.revealed[data-num="7"] { color: #252525; }
+.cell.revealed[data-num="8"] { color: #848484; }
+.cell.mine.revealed {
+  background: #f22;
+  color: #fff;
+  border-color: #7b7b7b;
+  font-size: 1.23rem;
+}
+.cell.flag {
+  background: #d5d53b;
+  color: #f10;
+  font-size: 1.4rem;
+}
+.cell:hover:not(.revealed) {
+  background: #e7e7e7;
+}
+.levels-bar {
+  margin: 0 0 16px 0;
+  display: flex;
+  gap: 11px;
+  justify-content: center;
+}
+.level-btn {
+  background: #e2e2e2;
+  border: 2px solid #bdbdbd;
+  border-radius: 7px;
+  padding: 8px 22px;
+  font-weight: 700;
+  color: #2e2e2e;
+  cursor: pointer;
+  font-size: 1.02rem;
+  transition: background 0.17s, color 0.14s;
+  box-shadow: 0 2px 7px #bbbbbb77;
+  margin: 0;
+}
+.level-btn.selected {
+  background: #fffa86;
+  color: #7c7000;
+  border: 2px solid #d8cb46;
+}
+@media (max-width: 700px) {
+  .mine-container { padding: 10px 1vw; }
+  .header { padding: 4px 3vw; height: 42px; }
+  .digits { width: 48px; font-size: 1.25rem; height: 28px; }
+  .smile-btn { width: 30px; height: 30px; font-size: 1.35rem; }
+  .cell { width: 21px; height: 21px; line-height: 21px; font-size: 0.9rem; }
+  .board3d { padding: 5px 4px 4px 4px; }
+  .levels-bar { gap: 3vw; }
+}
 </style>
 </head>
 <body>
-  <h1>💣 지뢰찾기</h1>
-  <div class="controls">
-    <button class="level-btn selected" data-rows="9" data-cols="9" data-mines="10">초급 (9×9, 10)</button>
-    <button class="level-btn" data-rows="16" data-cols="16" data-mines="40">중급 (16×16, 40)</button>
-    <button class="level-btn" data-rows="16" data-cols="30" data-mines="99">고급 (16×30, 99)</button>
+<div class="wrapper">
+  <div class="mine-container">
+    <div class="levels-bar">
+      <button class="level-btn selected" data-rows="9" data-cols="9" data-mines="10">초급 (9×9, 10)</button>
+      <button class="level-btn" data-rows="16" data-cols="16" data-mines="40">중급 (16×16, 40)</button>
+      <button class="level-btn" data-rows="16" data-cols="30" data-mines="99">고급 (16×30, 99)</button>
+    </div>
+    <div class="header">
+      <div class="digits" id="flagsLeft">010</div>
+      <div class="smile-btn" id="resetBtn" title="새 게임">😊</div>
+      <div class="digits" id="timerVal">000</div>
+    </div>
+    <div class="board3d">
+      <div id="board"></div>
+    </div>
   </div>
-  <button id="resetBtn">새 게임 🔄</button>
-  <div class="status-bar">
-    <div>🚩 남은 지뢰: <span id="flagsLeft">0</span></div>
-    <div>⏱️ 시간: <span id="timerVal">0</span>초<span id="bestRecord" class="best-record"></span></div>
-  </div>
-  <div id="board"></div>
-
+</div>
 <script>
-  let rows = 9, cols = 9, mines = 10;
-  let board = [], revealed = [], flagged = [];
-  let gameOver = false;
-  let cellsRevealed = 0;
-  let flagsLeft = 0;
-  let timer = 0;
-  let timerId = null;
-  let started = false;
-  let firstClick = true;
-  let levelKey = 'easy';
-  let bestRecords = { easy: null, normal: null, hard: null };
+let rows = 9, cols = 9, mines = 10;
+let board = [], revealed = [], flagged = [];
+let gameOver = false;
+let cellsRevealed = 0;
+let flagsLeft = 0;
+let timer = 0;
+let timerId = null;
+let started = false;
+let firstClick = true;
+let levelKey = 'easy';
 
-  const boardDiv = document.getElementById('board');
-  const flagsLeftSpan = document.getElementById('flagsLeft');
-  const timerValSpan = document.getElementById('timerVal');
-  const bestRecordSpan = document.getElementById('bestRecord');
-  const resetBtn = document.getElementById('resetBtn');
+const boardDiv = document.getElementById('board');
+const flagsLeftDiv = document.getElementById('flagsLeft');
+const timerValDiv = document.getElementById('timerVal');
+const resetBtn = document.getElementById('resetBtn');
 
-  const LEVELS = [
-    {name:'초급', rows:9, cols:9, mines:10, key:'easy'},
-    {name:'중급', rows:16, cols:16, mines:40, key:'normal'},
-    {name:'고급', rows:16, cols:30, mines:99, key:'hard'}
-  ];
+const LEVELS = [
+  {name:'초급', rows:9, cols:9, mines:10, key:'easy'},
+  {name:'중급', rows:16, cols:16, mines:40, key:'normal'},
+  {name:'고급', rows:16, cols:30, mines:99, key:'hard'}
+];
 
-  function loadRecords() {
-    try {
-      const data = JSON.parse(localStorage.getItem('minesBest'));
-      if(data) bestRecords = {...bestRecords, ...data};
-    } catch {}
-  }
-  function saveRecords() {
-    localStorage.setItem('minesBest', JSON.stringify(bestRecords));
-  }
-  function updateBestRecordUI() {
-    const rec = bestRecords[levelKey];
-    bestRecordSpan.textContent = rec ? ` | 최고기록: ${rec}초` : '';
-  }
+const digitFontCSS = document.createElement("style");
+digitFontCSS.innerText = `
+@font-face {
+  font-family: 'Digital-7';
+  src: local('Digital-7'), url('https://fonts.cdnfonts.com/s/16234/Digital7-rg1J.woff') format('woff');
+  font-weight: normal; font-style: normal;
+}
+`;
+document.head.appendChild(digitFontCSS);
 
-  document.querySelectorAll('.level-btn').forEach(btn=>{
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      rows = +btn.dataset.rows;
-      cols = +btn.dataset.cols;
-      mines = +btn.dataset.mines;
-      levelKey = LEVELS.find(l => l.rows === rows && l.cols === cols && l.mines === mines).key;
-      resetGame();
-    });
-  });
-
-  resetBtn.addEventListener('click', () => {
+function formatDigit(n, len=3) {
+  return n.toString().padStart(len, '0');
+}
+function updateCounters() {
+  flagsLeftDiv.textContent = formatDigit(flagsLeft, 3);
+  timerValDiv.textContent = formatDigit(timer, 3);
+}
+document.querySelectorAll('.level-btn').forEach(btn=>{
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    rows = +btn.dataset.rows;
+    cols = +btn.dataset.cols;
+    mines = +btn.dataset.mines;
+    levelKey = LEVELS.find(l => l.rows === rows && l.cols === cols && l.mines === mines).key;
     resetGame();
   });
-
-  function resetGame() {
-    firstClick = true;
-    started = false;
-    gameOver = false;
-    timer = 0;
-    cellsRevealed = 0;
-    flagsLeft = mines;
-    flagsLeftSpan.textContent = flagsLeft;
-    timerValSpan.textContent = timer;
-    clearInterval(timerId);
-    timerId = null;
-
-    board = Array.from({length:rows}, () => Array(cols).fill(0));
-    revealed = Array.from({length:rows}, () => Array(cols).fill(false));
-    flagged = Array.from({length:rows}, () => Array(cols).fill(false));
-
-    drawBoard();
-    updateBestRecordUI();
-  }
-
-  function placeMines(excludeRow, excludeCol) {
-    let placed = 0;
-    while (placed < mines) {
-      const r = Math.floor(Math.random() * rows);
-      const c = Math.floor(Math.random() * cols);
-      if (board[r][c] === 9) continue;
-      if (Math.abs(r - excludeRow) <= 1 && Math.abs(c - excludeCol) <= 1) continue;
-      board[r][c] = 9;
-      placed++;
-    }
-  }
-
-  function calculateNumbers() {
-    for(let r=0; r<rows; r++) {
-      for(let c=0; c<cols; c++) {
-        if(board[r][c] === 9) continue;
-        let count = 0;
-        for(let dr=-1; dr<=1; dr++) {
-          for(let dc=-1; dc<=1; dc++) {
-            let nr = r+dr, nc = c+dc;
-            if(nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc] === 9) count++;
-          }
-        }
-        board[r][c] = count;
-      }
-    }
-  }
-
-  function startTimer() {
-    if(started) return;
-    started = true;
-    timerId = setInterval(() => {
-      timer++;
-      timerValSpan.textContent = timer;
-    }, 1000);
-  }
-
-  function stopTimer() {
-    clearInterval(timerId);
-    timerId = null;
-  }
-
-  function drawBoard() {
-    let html = '';
-    for(let r=0; r<rows; r++) {
-      html += '<div class="row">';
-      for(let c=0; c<cols; c++) {
-        let cls = 'cell';
-        let text = '';
-        if(revealed[r][c]) {
-          cls += ' revealed';
-          let numAttr = '';
-          if(board[r][c] === 9) {
-            cls += ' mine';
-            text = '💣';
-          } else if(board[r][c] > 0) {
-            text = board[r][c];
-            numAttr = ` data-num="${board[r][c]}"`;
-          }
-          html += `<div class="${cls}" data-r="${r}" data-c="${c}"${numAttr}>${text}</div>`;
-        } else if(flagged[r][c]) {
-          cls += ' flag';
-          text = '🚩';
-          html += `<div class="${cls}" data-r="${r}" data-c="${c}">${text}</div>`;
-        } else {
-          html += `<div class="${cls}" data-r="${r}" data-c="${c}"></div>`;
-        }
-      }
-      html += '</div>';
-    }
-    boardDiv.innerHTML = html;
-
-    document.querySelectorAll('.cell').forEach(cell => {
-      const r = +cell.dataset.r;
-      const c = +cell.dataset.c;
-
-      cell.oncontextmenu = e => e.preventDefault();
-
-      cell.onmousedown = e => {
-        if(gameOver || revealed[r][c]) return;
-
-        if(e.button === 2) {
-          if(flagged[r][c]) {
-            flagged[r][c] = false;
-            flagsLeft++;
-          } else if(flagsLeft > 0) {
-            flagged[r][c] = true;
-            flagsLeft--;
-          }
-          flagsLeftSpan.textContent = flagsLeft;
-          drawBoard();
-        } else if(e.button === 0) {
-          if(firstClick) {
-            firstClick = false;
-            placeMines(r, c);
-            calculateNumbers();
-            openSafeArea(r, c);
-            startTimer();
-          } else {
-            openCell(r, c);
-          }
-        }
-      };
-
-      cell.onclick = () => {
-        if(gameOver) return;
-        if(!revealed[r][c]) return;
-        autoOpenAround(r, c);
-      };
-
-      let timerTouch;
-      cell.ontouchstart = () => {
-        timerTouch = setTimeout(() => {
-          if(!revealed[r][c]) {
-            flagged[r][c] = !flagged[r][c];
-            flagsLeft += flagged[r][c] ? -1 : 1;
-            flagsLeftSpan.textContent = flagsLeft;
-            drawBoard();
-          }
-        }, 400);
-      };
-      cell.ontouchend = () => clearTimeout(timerTouch);
-    });
-  }
-
-  function openSafeArea(r, c) {
-    const queue = [];
-    const visited = Array.from({length:rows}, () => Array(cols).fill(false));
-    queue.push([r,c]);
-    visited[r][c] = true;
-
-    while(queue.length) {
-      const [cr, cc] = queue.shift();
-      if(!revealed[cr][cc] && !flagged[cr][cc]) {
-        revealed[cr][cc] = true;
-        cellsRevealed++;
-      }
-      if(board[cr][cc] === 0) {
-        for(let dr = -1; dr <= 1; dr++) {
-          for(let dc = -1; dc <= 1; dc++) {
-            let nr = cr + dr, nc = cc + dc;
-            if(nr >= 0 && nr < rows && nc >= 0 && nc < cols && !visited[nr][nc] && board[nr][nc] !== 9) {
-              queue.push([nr,nc]);
-              visited[nr][nc] = true;
-            }
-          }
+});
+resetBtn.addEventListener('click', () => {
+  resetGame();
+});
+function resetGame() {
+  firstClick = true;
+  started = false;
+  gameOver = false;
+  timer = 0;
+  cellsRevealed = 0;
+  flagsLeft = mines;
+  clearInterval(timerId);
+  timerId = null;
+  board = Array.from({length:rows}, () => Array(cols).fill(0));
+  revealed = Array.from({length:rows}, () => Array(cols).fill(false));
+  flagged = Array.from({length:rows}, () => Array(cols).fill(false));
+  updateCounters();
+  drawBoard();
+  resetBtn.textContent = "😊";
+}
+function openSafeArea(r, c) {
+  const queue = [];
+  const visited = Array.from({length:rows}, () => Array(cols).fill(false));
+  queue.push([r,c]); visited[r][c] = true;
+  let changed = false;
+  while(queue.length) {
+    const [cr, cc] = queue.shift();
+    if(!revealed[cr][cc] && !flagged[cr][cc]) { revealed[cr][cc] = true; cellsRevealed++; changed = true; }
+    if(board[cr][cc] === 0) {
+      for(let dr = -1; dr <= 1; dr++) for(let dc = -1; dc <= 1; dc++) {
+        let nr = cr + dr, nc = cc + dc;
+        if(nr >= 0 && nr < rows && nc >= 0 && nc < cols && !visited[nr][nc] && board[nr][nc] !== 9) {
+          queue.push([nr,nc]); visited[nr][nc] = true;
         }
       }
     }
-    drawBoard();
   }
-
-  function openCell(r, c) {
-    if(revealed[r][c] || flagged[r][c] || gameOver) return;
-
-    revealed[r][c] = true;
+  if (changed) drawBoard();
+}
+function openCell(r, c) {
+  if(revealed[r][c] || flagged[r][c] || gameOver) return;
+  let stack = [[r, c]];
+  while (stack.length) {
+    let [cr, cc] = stack.pop();
+    if(revealed[cr][cc] || flagged[cr][cc]) continue;
+    revealed[cr][cc] = true;
     cellsRevealed++;
-
-    if(board[r][c] === 9) {
+    if(board[cr][cc] === 9) {
       gameOver = true;
       revealAll();
+      resetBtn.textContent = "😵";
       stopTimer();
-      setTimeout(() => alert('💥 게임 오버! 지뢰를 밟았습니다!'), 150);
+      setTimeout(() => alert('💥 게임 오버! 지뢰를 밟았습니다!'), 100);
+      drawBoard();
       return;
     }
-
-    if(board[r][c] === 0) {
-      for(let dr = -1; dr <= 1; dr++) {
-        for(let dc = -1; dc <= 1; dc++) {
-          let nr = r + dr, nc = c + dc;
-          if(nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-            if(!revealed[nr][nc]) openCell(nr, nc);
-          }
+    if(board[cr][cc] === 0) {
+      for(let dr = -1; dr <= 1; dr++) for(let dc = -1; dc <= 1; dc++) {
+        let nr = cr + dr, nc = cc + dc;
+        if(nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+          if(!revealed[nr][nc]) stack.push([nr, nc]);
         }
       }
     }
-
-    if(cellsRevealed === rows * cols - mines) {
-      gameOver = true;
-      revealAll();
-      stopTimer();
-      setTimeout(() => {
-        if(!bestRecords[levelKey] || timer < bestRecords[levelKey]) {
-          bestRecords[levelKey] = timer;
-          saveRecords();
-          updateBestRecordUI();
-          alert(`🎉 승리! 기록 갱신! ${timer}초`);
-        } else {
-          alert('🎉 승리! 모든 지뢰를 찾았습니다!');
+  }
+  if(cellsRevealed === rows * cols - mines) {
+    gameOver = true;
+    revealAll();
+    resetBtn.textContent = "😎";
+    stopTimer();
+    setTimeout(() => alert('🎉 승리! 모든 지뢰를 찾았습니다!'), 100);
+  }
+  drawBoard();
+}
+function autoOpenAround(r, c) {
+  if(!revealed[r][c]) return;
+  if(board[r][c] === 0 || board[r][c] === 9) return;
+  const number = board[r][c];
+  let flagCount = 0, unopened = [];
+  for(let dr=-1; dr<=1; dr++) for(let dc=-1; dc<=1; dc++) {
+    if(dr === 0 && dc === 0) continue;
+    const nr = r+dr, nc = c+dc;
+    if(nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
+    if(flagged[nr][nc]) flagCount++;
+    else if(!revealed[nr][nc]) unopened.push([nr,nc]);
+  }
+  if(flagCount === number) {
+    unopened.forEach(([nr, nc]) => openCell(nr, nc));
+    drawBoard();
+  }
+}
+function placeMines(excludeRow, excludeCol) {
+  let placed = 0;
+  while (placed < mines) {
+    const r = Math.floor(Math.random() * rows);
+    const c = Math.floor(Math.random() * cols);
+    if (board[r][c] === 9) continue;
+    if (Math.abs(r - excludeRow) <= 1 && Math.abs(c - excludeCol) <= 1) continue;
+    board[r][c] = 9;
+    placed++;
+  }
+}
+function calculateNumbers() {
+  for(let r=0; r<rows; r++) for(let c=0; c<cols; c++) {
+    if(board[r][c] === 9) continue;
+    let count = 0;
+    for(let dr=-1; dr<=1; dr++) for(let dc=-1; dc<=1; dc++) {
+      let nr = r+dr, nc = c+dc;
+      if(nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc] === 9) count++;
+    }
+    board[r][c] = count;
+  }
+}
+function startTimer() {
+  if(started) return;
+  started = true;
+  timerId = setInterval(() => {
+    timer++;
+    updateCounters();
+  }, 1000);
+}
+function stopTimer() {
+  clearInterval(timerId); timerId = null;
+}
+function drawBoard() {
+  let html = '';
+  for(let r=0; r<rows; r++) {
+    html += '<div class="row">';
+    for(let c=0; c<cols; c++) {
+      let cls = 'cell';
+      let text = '', numAttr = '';
+      if(revealed[r][c]) {
+        cls += ' revealed';
+        if(board[r][c] === 9) { cls += ' mine'; text = '💣'; }
+        else if(board[r][c] > 0) { text = board[r][c]; numAttr = ` data-num="${board[r][c]}"`; }
+      } else if(flagged[r][c]) { cls += ' flag'; text = '🚩'; }
+      html += `<div class="${cls}" data-r="${r}" data-c="${c}"${numAttr}>${text}</div>`;
+    }
+    html += '</div>';
+  }
+  boardDiv.innerHTML = html;
+  document.querySelectorAll('.cell').forEach(cell => {
+    const r = +cell.dataset.r;
+    const c = +cell.dataset.c;
+    // 우클릭 브라우저 메뉴 방지
+    cell.oncontextmenu = e => e.preventDefault();
+    cell.onmousedown = e => {
+      if(gameOver) return;
+      // 이미 열린 숫자칸에 좌클릭(1~8): 즉시 주변 오픈
+      if(e.button === 0 && revealed[r][c] && board[r][c] > 0 && board[r][c] < 9) {
+        autoOpenAround(r, c);
+        return;
+      }
+      if(revealed[r][c]) return;
+      if(e.button === 2) {
+        if(flagged[r][c]) { flagged[r][c] = false; flagsLeft++; }
+        else if(flagsLeft > 0) { flagged[r][c] = true; flagsLeft--; }
+        updateCounters(); drawBoard();
+      } else if(e.button === 0) {
+        if(firstClick) {
+          firstClick = false;
+          placeMines(r, c); calculateNumbers(); openSafeArea(r, c); startTimer();
+        } else openCell(r, c);
+      }
+    };
+    // 더블클릭(보조)
+    cell.ondblclick = () => {
+      if(gameOver || !revealed[r][c] || board[r][c] === 0 || board[r][c] === 9) return;
+      autoOpenAround(r, c);
+    };
+    // 모바일: 롱터치로 깃발
+    let timerTouch;
+    cell.ontouchstart = () => {
+      timerTouch = setTimeout(() => {
+        if(!revealed[r][c]) {
+          flagged[r][c] = !flagged[r][c];
+          flagsLeft += flagged[r][c] ? -1 : 1;
+          updateCounters();
+          drawBoard();
         }
-      }, 150);
-    }
-    drawBoard();
-  }
-
-  function revealAll() {
-    for(let r=0; r<rows; r++) {
-      for(let c=0; c<cols; c++) {
-        revealed[r][c] = true;
-      }
-    }
-    drawBoard();
-  }
-
-  function autoOpenAround(r, c) {
-    if(!revealed[r][c]) return;
-    if(board[r][c] === 0 || board[r][c] === 9) return;
-
-    const number = board[r][c];
-    let flagCount = 0;
-    let unopened = [];
-
-    for(let dr=-1; dr<=1; dr++) {
-      for(let dc=-1; dc<=1; dc++) {
-        if(dr === 0 && dc === 0) continue;
-        const nr = r+dr, nc = c+dc;
-        if(nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-
-        if(flagged[nr][nc]) flagCount++;
-        else if(!revealed[nr][nc]) unopened.push([nr,nc]);
-      }
-    }
-
-    if(flagCount === number) {
-      for(const [nr, nc] of unopened) {
-        openCell(nr, nc);
-      }
-    }
-  }
-
-  loadRecords();
-  resetGame();
+      }, 420);
+    };
+    cell.ontouchend = () => clearTimeout(timerTouch);
+  });
+}
+function revealAll() {
+  for(let r=0; r<rows; r++) for(let c=0; c<cols; c++) revealed[r][c] = true;
+  drawBoard();
+}
+resetGame();
 </script>
 </body>
 </html>
