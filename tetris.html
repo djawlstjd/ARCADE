@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>세련된 테트리스</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Do+Hyeon&display=swap" rel="stylesheet">
+<style>
+  /* ... (CSS는 그대로, 생략) ... */
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="main">
+    <div style="position:relative;">
+      <div id="tetris-board"></div>
+      <div id="pauseOverlay">일시정지</div>
+    </div>
+    <div id="scoreboard">점수: 0</div>
+    <div id="key-guide">
+      <span class="key">ESC</span> 일시정지 / 재시작&nbsp;&nbsp;
+      <span class="key">스페이스바</span> 하드드롭&nbsp;&nbsp;
+      <span class="key">↑</span> 회전&nbsp;&nbsp;
+      <span class="key">← →</span> 이동&nbsp;&nbsp;
+      <span class="key">↓</span> 소프트드롭
+    </div>
+    <div id="btn-container">
+      <button id="resetBtn">새 게임</button>
+      <button id="exitBtn">게임 나가기</button>
+    </div>
+    <div id="musicNotice">🔈 음악이 들리지 않으면 화면을 클릭해 주세요!</div>
+  </div>
+  <div id="side-panel">
+    <div id="next-block">
+      <h3>다음 블럭</h3>
+      <div id="next-grid"></div>
+    </div>
+    <audio id="bgm" src="https://cdn.pixabay.com/audio/2023/02/10/audio_128bfe3b88.mp3" loop></audio>
+  </div>
+</div>
+<script>
+/* ... 나머지 JS코드는 기존 그대로 ... */
+
+exitBtn.addEventListener('click', () => {
+  if(confirm('게임을 종료하시겠습니까?')) {
+    window.location.href = 'index.html';
+  }
+});
+</script>
+</body>
+</html>

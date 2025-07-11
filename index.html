@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>게임 모음</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css');
+  body {
+    margin: 0; padding: 0; min-height: 100vh;
+    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: linear-gradient(135deg, #f0f6ff 70%, #fffbe6 100%);
+    color: #1a2a4f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 1.2s ease forwards;
+  }
+  @keyframes fadeIn {
+    0% {opacity: 0; transform: translateY(30px);}
+    100% {opacity: 1; transform: translateY(0);}
+  }
+  h1 {
+    margin-top: 40px;
+    font-weight: 700;
+    font-size: 2.8rem;
+    color: #3259db;
+    letter-spacing: 4px;
+    user-select: none;
+    text-shadow: 1px 1px 5px #a5b8e7;
+  }
+  .subtitle {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #7f8c8d;
+    user-select: none;
+    margin-bottom: 40px;
+    letter-spacing: 0.7px;
+  }
+  ul {
+    width: 340px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 60px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  li {
+    background: #dbefff;
+    border-radius: 18px;
+    padding: 22px 0;
+    font-weight: 700;
+    font-size: 1.45rem;
+    text-align: center;
+    color: #3168de;
+    cursor: pointer;
+    box-shadow: 0 8px 30px #c3e0ff88;
+    transition: background-color 0.35s, box-shadow 0.35s, transform 0.3s;
+    user-select: none;
+    filter: drop-shadow(0 2px 2px #b2c3dfcc);
+  }
+  li:hover {
+    background: #a7c6ff;
+    box-shadow: 0 12px 45px #7ea7ffbb;
+    transform: translateY(-4px);
+  }
+  li a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+  }
+  footer {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    margin-bottom: 30px;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+  <h1>게임 모음</h1>
+  <p class="subtitle">여러가지 게임을 즐겨보세요! 클릭하여 플레이</p>
+  <ul>
+    <li><a href="tetris.html">테트리스</a></li>
+    <li><a href="updown.html">업다운 게임</a></li>
+    <li><a href="2048.html">2048 게임</a></li>
+    <li><a href="minesweeper.html">지뢰찾기</a></li>
+    <li><a href="omok.html">2인용 오목 게임</a></li>
+  </ul>
+  <footer>© 2025 게임 모음 — All rights reserved.</footer>
+</body>
+</html>
